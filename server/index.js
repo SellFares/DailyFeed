@@ -20,7 +20,7 @@ mongoose.connect(process.env.MONGO_URI, )
 });
 
 app.use(cors({
-  origin: "http://127.0.0.1:5500",  // origin true ya3ni kolchi y9der y accessi l API
+  origin: process.env.CLIENT_URL || "http://127.0.0.1:5500",
   methods: ["GET", "POST", "PUT", "DELETE"],
   allowedHeaders: ["Content-Type", "Authorization"]
 }));
@@ -29,11 +29,18 @@ app.use(cors({
 
 // middleware
 app.use(express.json());
+app.use(express.static('../client'));
 app.use(helmet());
 app.use(morgan('common'));
 app.use('/api/users', userRoute);
 app.use('/api/auth', authRoute);
 app.use('/api/posts', postRoute);
+
+// Serve frontend for any non-API routes
+const PORT = process.env.PORT || 8800;
+app.listen(PORT, () => {
+    console.log(`Backend Server is running on port ${PORT}`
+});
 
 
 

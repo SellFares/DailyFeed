@@ -1,0 +1,16 @@
+// terminal
+npm init
+npm i bootstrap@5.3.8 --save
+npm i bootstrap-icons --save
+npm install axios --save
+npm isntall express mongoose dotenv helmet morgan nodemon
+npm run start
+npm run dev     
+node index.js
+npm install bcrypt
+npm install jsonwebtoken
+npm install cloudinary multer multer-storage-cloudinary
+npm install cors
+
+// fel package.json 
+// fel part scripts "test": "echo \"Error: no test specified\" && exit 1" inbadlouha 

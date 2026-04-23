@@ -39,7 +39,7 @@ app.use('/api/posts', postRoute);
 // Serve frontend for any non-API routes
 const PORT = process.env.PORT || 8800;
 app.listen(PORT, () => {
-    console.log(`Backend Server is running on port ${PORT}`
+    console.log(`Backend Server is running on port ${PORT}`);
 });
 
 

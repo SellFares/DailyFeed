@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMP Profile</title>
+    <script src="./node_modules/axios/dist/axios.min.js"></script>
+    <script src="./node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="./node_modules/bootstrap/dist/css/bootstrap.css">
+    <link rel="stylesheet" href="./theme.css">
+</head>
+<body>
+    <div class="fade show" id="success-alert"></div>
+
+    <div class="app-shell container py-4">
+        <nav class="navbar navbar-expand-lg app-navbar mb-4">
+            <div class="container-fluid px-2 px-md-3">
+                <a class="navbar-brand" href="home.html">SMP</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item"><a class="nav-link" href="home.html">Home</a></li>
+                        <li class="nav-item"><a class="nav-link active" href="profile.html">Profile</a></li>
+                    </ul>
+                    <div class="d-flex align-items-center gap-2 flex-wrap justify-content-end ms-auto">
+                        <button id="theme-toggle" type="button" class="btn btn-theme-toggle" onclick="toggleTheme()">Dark</button>
+                        <button id="login-btn" type="button" data-bs-toggle="modal" data-bs-target="#login-Modal" class="btn btn-outline-success">Login</button>
+                        <button id="register-btn" type="button" data-bs-toggle="modal" data-bs-target="#register-Modal" class="btn btn-outline-success">Register</button>
+                        <span class="align-items-center" id="user-div">
+                            <img id="nav-user-image" src="./placeholder/1.jpg" height="40" width="40" class="rounded-circle nav-avatar">
+                            <span id="nav-username" class="ms-2 fw-semibold">@user</span>
+                        </span>
+                        <button onclick="logout()" id="logout-btn" type="button" class="btn btn-outline-danger">Logout</button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <section class="feed-head mb-3">
+            <h1 class="feed-title">Profile</h1>
+            <p class="feed-subtitle mb-0">Your account overview and posted content.</p>
+        </section>
+
+        <main>
+            <section class="card post-card profile-summary mb-3">
+                <div class="card-body">
+                    <div class="profile-head-wrap">
+                        <div class="profile-user-wrap">
+                            <img id="profile-image" class="profile-avatar" src="./placeholder/1.jpg" alt="Profile image">
+                            <div>
+                                <h2 class="profile-name" id="profile-name">Username</h2>
+                                <p class="profile-username" id="profile-username">@username</p>
+                            </div>
+                        </div>
+                        <div class="profile-stats-wrap">
+                            <div class="profile-stat-item">
+                                <span class="profile-stat-number" id="profile-posts-count">0</span>
+                                <span class="profile-stat-label">Posts</span>
+                            </div>
+                            <div class="profile-stat-item">
+                                <span class="profile-stat-number" id="profile-comments-count">0</span>
+                                <span class="profile-stat-label">Comments</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="feed-head mb-2">
+                <h3 class="feed-title" id="profile-posts-title">Posts</h3>
+            </section>
+
+            <div id="profile-posts-list">
+                <article class="card post-card">
+                    <div class="card-body post-body" style="cursor: default;">
+                        <p class="post-text mb-0">Loading profile posts...</p>
+                    </div>
+                </article>
+            </div>
+        </main>
+    </div>
+
+    <div class="modal fade" id="login-Modal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5">Login</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="mb-3">
+                            <label class="col-form-label">Email :</label>
+                            <input type="text" class="form-control" id="email-input">
+                        </div>
+                        <div class="mb-3">
+                            <label class="col-form-label">Password :</label>
+                            <input type="password" class="form-control" id="password-input">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="LoginBtnClicked()">Login</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="register-Modal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5">Register A New User</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="mb-3">
+                            <label class="col-form-label">Email :</label>
+                            <input type="text" class="form-control" id="register-email-input">
+                        </div>
+                        <div class="mb-3">
+                            <label class="col-form-label">Username :</label>
+                            <input type="text" class="form-control" id="register-username-input">
+                        </div>
+                        <div class="mb-3">
+                            <label class="col-form-label">Password :</label>
+                            <input type="password" class="form-control" id="register-password-input">
+                        </div>
+                        <div class="mb-3">
+                            <label class="col-form-label">Profile Image :</label>
+                            <input type="file" class="form-control" id="register-image-input">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="RegisterBtnClicked()">Register</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="theme.js"></script>
+    <script src="mainLogic.js"></script>
+    <script src="profileScript.js"></script>
+</body>
+</html>

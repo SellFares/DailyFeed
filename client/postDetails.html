@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMP Post</title>
+    <script src="./node_modules/axios/dist/axios.min.js"></script>
+    <script src="./node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="./node_modules/bootstrap/dist/css/bootstrap.css">
+    <link rel="stylesheet" href="./theme.css">
+</head>
+<body>
+    <div class="fade show" id="success-alert"></div>
+
+    <div class="app-shell container py-4">
+        <nav class="navbar navbar-expand-lg app-navbar mb-4">
+            <div class="container-fluid px-2 px-md-3">
+                <a class="navbar-brand" href="home.html">SMP</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item"><a class="nav-link" href="home.html">Home</a></li>
+                        <li class="nav-item"><a class="nav-link" href="profile.html">Profile</a></li>
+                    </ul>
+                    <div class="d-flex align-items-center gap-2 flex-wrap justify-content-end ms-auto">
+                        <button id="theme-toggle" type="button" class="btn btn-theme-toggle" onclick="toggleTheme()">Dark</button>
+                        <button id="login-btn" type="button" data-bs-toggle="modal" data-bs-target="#login-Modal" class="btn btn-outline-success">Login</button>
+                        <button id="register-btn" type="button" data-bs-toggle="modal" data-bs-target="#register-Modal" class="btn btn-outline-success">Register</button>
+                        <span class="align-items-center" id="user-div">
+                            <img id="nav-user-image" src="./placeholder/1.jpg" height="40" width="40" class="rounded-circle nav-avatar">
+                            <span id="nav-username" class="ms-2 fw-semibold">@user</span>
+                        </span>
+                        <button onclick="logout()" id="logout-btn" type="button" class="btn btn-outline-danger">Logout</button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <section class="feed-head mb-3">
+            <h1 class="feed-title"><span id="username-span">User</span> Post</h1>
+            <p class="feed-subtitle mb-0">Follow the thread and add a clean comment.</p>
+        </section>
+
+        <main>
+            <div id="post"></div>
+        </main>
+    </div>
+
+    <div class="modal fade" id="login-Modal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5">Login</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="mb-3">
+                            <label class="col-form-label">Email :</label>
+                            <input type="text" class="form-control" id="email-input">
+                        </div>
+                        <div class="mb-3">
+                            <label class="col-form-label">Password :</label>
+                            <input type="password" class="form-control" id="password-input">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="LoginBtnClicked()">Login</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="register-Modal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5">Register A New User</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="mb-3">
+                            <label class="col-form-label">Email :</label>
+                            <input type="text" class="form-control" id="register-email-input">
+                        </div>
+                        <div class="mb-3">
+                            <label class="col-form-label">Username :</label>
+                            <input type="text" class="form-control" id="register-username-input">
+                        </div>
+                        <div class="mb-3">
+                            <label class="col-form-label">Password :</label>
+                            <input type="password" class="form-control" id="register-password-input">
+                        </div>
+                        <div class="mb-3">
+                            <label class="col-form-label">Profile Image :</label>
+                            <input type="file" class="form-control" id="register-image-input">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="RegisterBtnClicked()">Register</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="theme.js"></script>
+    <script src="mainLogic.js"></script>
+    <script>
+        const urlParams = new URLSearchParams(window.location.search)
+        const id = urlParams.get("postId")
+
+        setupUI()
+        getPost()
+
+        function getPost() {
+            axios.get(baseUrl + `/posts/${id}`)
+            .then((response) => {
+                const Post = response.data.data
+                const comments = Post.comments
+                const author = Post.author
+                const postImage = Post.image 
+                
+                const profileImage = author.profile_image 
+                document.getElementById("username-span").innerHTML = author.username
+
+                let postTitle = ""
+                if (Post.title != null) {
+                    postTitle = Post.title
+                }
+
+                let commentsContent = ``
+
+                for (comment of comments) {
+                    commentsContent += `
+                        <div class="comment-box mb-2">
+                            <div class="d-flex align-items-center gap-2 mb-2">
+                                <img src="${comment.author.profile_image}" class="rounded-circle" width="36" height="36">
+                                <b>@${comment.author.username}</b>
+                            </div>
+                            <div>${comment.body}</div>
+                        </div>
+                    `
+                }
+
+                const postContent = `
+                    <article class="card post-card">
+                        <div class="card-header post-header">
+                            <div class="post-author">
+                                <img class="avatar-sm" src="${profileImage}" alt="${author.username}">
+                                <span>@${author.username}</span>
+                            </div>
+                        </div>
+                        <div class="card-body post-body" style="cursor: default;">
+                            <img class="post-image" src="${postImage}" ${postImage ? '' : 'hidden'} alt="Post image">
+                            <p class="post-time">${timeAgo(Post.created_at)}</p>
+                            <h5 class="post-title">${postTitle}</h5>
+                            <p class="post-text">${Post.body}</p>
+                            <div class="post-footer">
+                                <span class="comments-pill">(${Post.comments_count}) Comments</span>
+                            </div>
+                        </div>
+                        <div class="px-3 pb-2">${commentsContent}</div>
+                        <div class="input-group px-3 pb-3" id="add-comment-div">
+                            <input id="comment-input" type="text" placeholder="add your comment here.." class="form-control">
+                            <button class="btn btn-outline-primary" onclick="createCommentClicked()" type="button">send</button>
+                        </div>
+                    </article>
+                `
+
+                document.getElementById("post").innerHTML = postContent
+            })
+        }
+
+        function createCommentClicked() {
+            let commentBody = document.getElementById("comment-input").value
+            let params = {
+                "body": commentBody
+            }
+            let token = localStorage.getItem("token")
+            let url = `${baseUrl}/posts/${id}/comments`
+            axios.post(url, params, {
+                headers: {
+                    "authorization": `Bearer ${token}`
+                }
+            })
+            .then(() => {
+                showAlert("the comments has been created successfully", "success")
+                getPost()
+            })
+            .catch((error) => {
+                const errorMessage = error.response.data.message
+                showAlert(errorMessage, "danger")
+            })
+        }
+    </script>
+</body>
+</html>

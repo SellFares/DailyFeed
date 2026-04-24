@@ -1,0 +1,42 @@
+###     Frontend-only publish:
+
+git checkout main
+git pull origin main
+git add client
+git status
+git commit -m "frontend: describe change"
+git push origin main
+Backend-only publish:
+
+###     Backend-only publish:
+
+git checkout main
+git pull origin main
+git add server render.yaml
+git status
+git commit -m "backend: describe change"
+git push origin main
+If you changed both:
+
+###     If you changed both:
+
+git checkout main
+git pull origin main
+git add client server render.yaml
+git status
+git commit -m "fullstack: describe change"
+git push origin main
+
+
+
+If Auto Deploy is ON in Render:
+No extra commands. Push is enough.
+
+If Auto Deploy is OFF:
+After push, trigger Manual Deploy in each Render service dashboard.
+
+Safety check before commit:
+
+Use git status and confirm only expected paths are staged.
+If frontend only, staged files should be under client.
+If backend only, staged files should be under server and maybe render.yaml.

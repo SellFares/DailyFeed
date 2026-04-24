@@ -1,6 +1,28 @@
 // const baseUrl = 'https://tarmeezacademy.com/api/v1';
  //const baseUrl = 'http://localhost:8800/api';
-const baseUrl = 'https://dailyfeed-as93.onrender.com/api';
+// const baseUrl = 'https://dailyfeed-as93.onrender.com/api';
+
+function resolveBaseUrl() {
+  const override = localStorage.getItem("apiBaseUrl");
+  if (override) return override;
+
+  const isLocal = ["localhost", "127.0.0.1"].includes(window.location.hostname);
+  return isLocal
+    ? "http://localhost:8800/api"
+    : "https://dailyfeed-as93.onrender.com/api";
+}
+
+function toggleLoader(show) {
+    const loader = document.querySelector(".loader");
+    if (show) {
+        loader.style.display = "block";
+    }
+    else {
+        loader.style.display = "none";
+    }
+}   
+
+const baseUrl = resolveBaseUrl();
 
 function setupUI() {
     const token = localStorage.getItem("token")
@@ -78,7 +100,7 @@ function LoginBtnClicked() {
     }
 
     const url = baseUrl+"/auth/login" ;
-
+    toggleLoader(true)
     axios.post(url,params )
     .then(function (response) {
         //console.log(response.data.token);
@@ -99,6 +121,9 @@ function LoginBtnClicked() {
         const message = error.response.data.message 
         showAlert(message, "danger")
         //console.log(error);
+    })
+    .finally(function () {
+        toggleLoader(false)
     });
 
 }
@@ -124,7 +149,7 @@ function RegisterBtnClicked() {
     const headers = {
         "content-Type": "multipart/form-data"
     }
-
+    toggleLoader(true)
     axios.post(url,formData, {
         headers: headers
     } )
@@ -146,6 +171,9 @@ function RegisterBtnClicked() {
         const message = error.response.data.message 
         showAlert(message, "danger")
         //console.log(error);
+    })
+    .finally(function () {
+        toggleLoader(false)     
     });
 }
 

@@ -135,7 +135,7 @@ function CreateNewPostClicked(){
 
         url = baseUrl+`/posts/${postId}`
     }
-
+    toggleLoader(true)
     axios.post(url,formData, {
         headers : headers
     } )
@@ -152,6 +152,9 @@ function CreateNewPostClicked(){
         const message = error.response.data.message 
         showAlert(message, "danger")
         //console.log(error);
+    })
+    .finally(function () {
+        toggleLoader(false)
     });
 
 }
@@ -212,7 +215,7 @@ function confirmPostDeletion(){
     const headers = {
         "authorization" : `Bearer ${token}`
     }
-
+    toggleLoader(true)
     axios.delete(url, {
         headers : headers
     } )
@@ -230,6 +233,9 @@ function confirmPostDeletion(){
         const message = error.response.data.message 
         showAlert(message, "danger")
         //console.log(error);
-    });
+    })
+    .finally(function () {
+        toggleLoader(false)
+    }) ;
 }
 

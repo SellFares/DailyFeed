@@ -19,18 +19,8 @@ mongoose.connect(process.env.MONGO_URI, )
     console.error('Error connecting to MongoDB:', err);
 });
 
-/*app.use(cors({
-  origin: process.env.CLIENT_URL || "http://127.0.0.1:5500",
-  methods: ["GET", "POST", "PUT", "DELETE"],
-  allowedHeaders: ["Content-Type", "Authorization"]
-}));*/
-
 app.use(cors({
-  origin: (origin, cb) => {
-    if (!origin) return cb(null, true); // Postman/server-to-server
-    if (allowedOrigins.includes(origin)) return cb(null, true);
-    return cb(new Error("Not allowed by CORS"));
-  },
+  origin: process.env.CLIENT_URL || "http://127.0.0.1:5500",
   methods: ["GET", "POST", "PUT", "DELETE"],
   allowedHeaders: ["Content-Type", "Authorization"]
 }));
